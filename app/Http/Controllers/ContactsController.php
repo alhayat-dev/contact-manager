@@ -2,18 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Contact;
 use Illuminate\Http\Request;
 
 class ContactsController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * * Display a listing of the contacts
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
     public function index()
     {
-        return view('contacts.index');
+        $contacts = Contact::paginate(5);
+//        dd($contacts);
+        return view('contacts.index', compact('contacts'));
     }
 
     /**
