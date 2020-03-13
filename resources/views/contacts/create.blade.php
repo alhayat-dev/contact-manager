@@ -7,11 +7,20 @@
         <strong>Add Contact</strong>
     </div>
 
-    <form action="{{ route('contacts.store') }}" method="POST">
+    <form action="{{ route('contacts.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div class="card-body">
             <div class="row">
                 <div class="col-md-9">
+                    @if(count($errors))
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
                     <div class="form-group row">
                         <label for="name" class="col-md-3 col-form-label">Name</label>
                         <div class="col-md-8">
@@ -47,12 +56,14 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="group" class="col-md-3 col-form-label">Group</label>
+                        <label for="group_id" class="col-md-3 col-form-label">Group</label>
                         <div class="col-md-5">
                             <select name="group_id" id="group_id" class="form-control">
                                 <option value="">Select group</option>
                                 @foreach($groups as $group)
-                                    <option value="{{ $group['id'] }}">{{ $group['name'] }}</option>
+{{--                                    <option value="{{ $group['id'] }}">{{ $group['name'] }}</option>--}}
+                                    <option value='1'>{{ $group['name'] }}</option>
+
                                 @endforeach
                             </select>
                         </div>
@@ -63,7 +74,7 @@
                     <div class="form-group row" id="add-new-group">
                         <div class="offset-md-3 col-md-8">
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="group_id" placeholder="Enter group name" aria-label="Enter group name" aria-describedby="button-addon2">
+                                <input type="text" class="form-control" name="group" placeholder="Enter group name" aria-label="Enter group name" aria-describedby="button-addon2">
                                 <div class="input-group-append">
                                     <button class="btn btn-outline-secondary" type="button" id="button-addon2">
                                         <i class="fa fa-check"></i>
@@ -101,5 +112,10 @@
         </div>
     </form>
 </div>
+<script>
 
+    $('#group_id').on('change',function () {
+      alert($('#group_id').val());
+    });
+</script>
 @endsection

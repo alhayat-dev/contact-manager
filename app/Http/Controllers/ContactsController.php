@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Contact;
 use App\Group;
+use App\Http\Requests\ContactRequest;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -36,9 +37,11 @@ class ContactsController extends Controller
      */
     public function create()
     {
+//        dd(Group::all(['name', 'id']));
         $groups = Group::all()->map(function ($item){
             return collect($item)->only(['id', 'name']);
         });
+//        dd($groups);
         return view('contacts.create', compact('groups'));
     }
 
@@ -48,9 +51,12 @@ class ContactsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ContactRequest $request)
     {
-        dd($request->all());
+//        dd($request->all());
+        Contact::create($request->all());
+
+        return redirect('contacts')->with('success', 'Contact Save');
     }
 
     /**
