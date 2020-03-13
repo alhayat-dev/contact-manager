@@ -35,7 +35,7 @@
             @endforeach
         </table>
         <div class="card-footer">
-                {{ $contacts->links() }}
+                {{ $contacts->appends( Request::query())->render() }}
         </div>
     </div>
 @endsection

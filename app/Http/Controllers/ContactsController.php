@@ -3,19 +3,30 @@
 namespace App\Http\Controllers;
 
 use App\Contact;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class ContactsController extends Controller
 {
     /**
-     * * Display a listing of the contacts
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     *  set pagination limit
+     * @var int
      */
-    public function index()
+    private $limit = 5;
+
+    /**
+     * @param Request $request
+     * @return Factory|View
+     */
+    public function index(Request $request)
     {
-        $contacts = Contact::paginate(5);
-//        dd($contacts);
+        if ($group_id = $request->get('group_id')){
+            $contacts = DB::table('contacts')->where('group_id', $group_id)->paginate($this->limit);
+        }else{
+            $contacts = Contact::paginate($this->limit);
+        }
         return view('contacts.index', compact('contacts'));
     }
 
