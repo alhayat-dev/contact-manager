@@ -6,7 +6,9 @@ use App\Contact;
 use App\Group;
 use App\Http\Requests\ContactRequest;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
@@ -18,87 +20,61 @@ class ContactsController extends Controller
      */
     private $limit = 5;
 
-    /**
-     * @param Request $request
-     * @return Factory|View
-     */
+    
     public function index(Request $request)
     {
         if ($group_id = $request->get('group_id')){
-            $contacts = DB::table('contacts')->where('group_id', $group_id)->paginate($this->limit);
+            $groups = Group::all();
+            $contacts = Contact::where('group_id', $group_id)->orderby('id', 'desc')->paginate($this->limit);
         }else{
-            $contacts = Contact::paginate($this->limit);
+            $contacts = Contact::orderby('id', 'desc')->paginate($this->limit);
         }
-        return view('contacts.index', compact('contacts'));
+
+        return view('contacts.index', compact('contacts','groups'));
     }
 
-    /**
-     * @return Factory|View
-     */
+
     public function create()
     {
-//        dd(Group::all(['name', 'id']));
         $groups = Group::all()->map(function ($item){
             return collect($item)->only(['id', 'name']);
         });
-//        dd($groups);
-        return view('contacts.create', compact('groups'));
+        $contact = new Contact();
+        return view('contacts.create', compact('groups','contact'));
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param ContactRequest $request
+     * @return RedirectResponse|Redirector
      */
     public function store(ContactRequest $request)
     {
-//        dd($request->all());
         Contact::create($request->all());
-
         return redirect('contacts')->with('success', 'Contact Save');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function show($id)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+
+    public function edit(Contact $contact)
     {
-        //
+        $groups = Group::all()->map(function ($item){
+            return collect($item)->only(['id', 'name']);
+        });
+        return  \view('contacts.edit', compact('contact','groups'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    public function update(ContactRequest $request, Contact $contact)
+    {
+        $contact->update($request->all());
+        return redirect('/contacts')->with('success', 'Your contact has been updated.');    }
+
+
     public function destroy($id)
     {
         //

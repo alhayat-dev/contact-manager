@@ -23,7 +23,7 @@
                 </td>
                 <td width="100" class="middle">
                     <div>
-                        <a href="#" class="btn btn-outline-secondary btn-circle btn-xs" title="Edit">
+                        <a href="{{ route('contacts.edit', $contact->id) }}" class="btn btn-outline-secondary btn-circle btn-xs" title="Edit">
                             <i class="fa fa-edit"></i>
                         </a>
                         <a href="#" class="btn btn-outline-danger btn-circle btn-xs" title="Delete">
