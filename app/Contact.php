@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Contact extends Model
 {
-    protected $fillable = ['name', 'email', 'address', 'company', 'phone', 'group_id'];
+    protected $fillable = ['name', 'email', 'address', 'company', 'phone', 'group_id', 'photo'];
 
     public function group()
     {

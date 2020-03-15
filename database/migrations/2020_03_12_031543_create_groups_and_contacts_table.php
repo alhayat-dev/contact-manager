@@ -26,6 +26,7 @@ class CreateGroupsAndContactsTable extends Migration
             $table->string('company');
             $table->string('email');
             $table->string('phone');
+
             $table->string('address');
             $table->timestamps();
 

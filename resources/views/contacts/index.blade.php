@@ -9,7 +9,12 @@
                     <div class="media">
                         <div class="media-left">
                             <a href="#">
-                                <img class="media-object" src="http://placehold.it/100x100" alt="...">
+{{--                                http://placehold.it/100x100--}}
+
+                                <img class="media-object"
+                                     src="{{  $contact->photo ? asset('uploads/' . $contact->photo) : 'http://placehold.it/100x100' }}"
+                                     alt="image her"
+                                     style="width: 100px; height: 100px;">
                             </a>
                         </div>
                         <div class="media-body">

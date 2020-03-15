@@ -20,7 +20,7 @@ class ContactsController extends Controller
      */
     private $limit = 5;
 
-    
+
     public function index(Request $request)
     {
         if ($group_id = $request->get('group_id')){
@@ -49,7 +49,8 @@ class ContactsController extends Controller
      */
     public function store(ContactRequest $request)
     {
-        Contact::create($request->all());
+        $data = $this->uploadProfileImage($request);
+        Contact::create($data);
         return redirect('contacts')->with('success', 'Contact Save');
     }
 
@@ -71,12 +72,29 @@ class ContactsController extends Controller
 
     public function update(ContactRequest $request, Contact $contact)
     {
-        $contact->update($request->all());
-        return redirect('/contacts')->with('success', 'Your contact has been updated.');    }
+        $data = $this->uploadProfileImage($request);
+        $contact->update($data);
+        return redirect('/contacts')->with('success', 'Your contact has been updated.');
+    }
 
 
     public function destroy($id)
     {
         //
     }
+
+    public function uploadProfileImage(ContactRequest $request)
+    {
+        $data = $request->all();
+
+        if ($request->hasFile('photo')) {
+            $photo = $request->file('photo');
+            $fileName = $photo->getClientOriginalName();
+            $destination = base_path() . '/public/uploads/';
+            $photo->move($destination, $fileName);
+            $data['photo'] = $fileName;
+        }
+        return $data;
+    }
+
 }

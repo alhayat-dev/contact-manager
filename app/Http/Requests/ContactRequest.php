@@ -27,6 +27,7 @@ class ContactRequest extends FormRequest
             'name' => 'required|min:5',
             'email' => 'required|email',
             'company' => 'required',
+            'photo' => 'required|image|mimes:jpg,jpeg,png,gif|max:2048'
         ];
     }
 }

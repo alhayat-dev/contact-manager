@@ -4,7 +4,7 @@
 
     <div class="card">
         <div class="card-header">
-            <strong>Add Contact</strong>
+            <strong>Edit Contact</strong>
         </div>
 
         <form action="{{ route('contacts.update', $contact->id) }}" method="POST" enctype="multipart/form-data">
