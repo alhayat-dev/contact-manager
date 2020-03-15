@@ -5,12 +5,10 @@ namespace App\Http\Controllers;
 use App\Contact;
 use App\Group;
 use App\Http\Requests\ContactRequest;
-use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
-use Illuminate\Support\Facades\DB;
-use Illuminate\View\View;
+
 
 class ContactsController extends Controller
 {
@@ -29,13 +27,26 @@ class ContactsController extends Controller
 
     public function index(Request $request)
     {
-        if ($group_id = $request->get('group_id')){
-            $groups = Group::all();
-            $contacts = Contact::where('group_id', $group_id)->orderby('id', 'desc')->paginate($this->limit);
-        }else{
-            $contacts = Contact::orderby('id', 'desc')->paginate($this->limit);
-        }
+//        if ($group_id = ($request->get('group_id'))){
+//            $contacts = Contact::where('group_id', $group_id)->orderby('id', 'desc')->paginate($this->limit);
+//        }else{
+//            $contacts = Contact::orderby('id', 'desc')->paginate($this->limit);
+//        }
 
+        $contacts = Contact::where(function ($query) use ($request) {
+            if ($group_id = $request->get('group_id')) {
+                $query->where('group_id', $group_id);
+            }
+            if ($term = $request->get('term')){
+                $keywords = '%'. $term .'%';
+                $query->orWhere('name', 'LIKE', $keywords);
+                $query->orWhere('company', 'LIKE', $keywords);
+                $query->orWhere('email', 'LIKE', $keywords);
+            }
+        })->orderby('id', 'desc')
+        ->paginate($this->limit);
+
+        $groups = Group::all();
         return view('contacts.index', compact('contacts','groups'));
     }
 
