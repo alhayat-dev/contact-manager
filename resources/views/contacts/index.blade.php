@@ -9,8 +9,6 @@
                     <div class="media">
                         <div class="media-left">
                             <a href="#">
-{{--                                http://placehold.it/100x100--}}
-
                                 <img class="media-object"
                                      src="{{  $contact->photo ? asset('uploads/' . $contact->photo) : 'http://placehold.it/100x100' }}"
                                      alt="image her"
@@ -31,9 +29,14 @@
                         <a href="{{ route('contacts.edit', $contact->id) }}" class="btn btn-outline-secondary btn-circle btn-xs" title="Edit">
                             <i class="fa fa-edit"></i>
                         </a>
-                        <a href="#" class="btn btn-outline-danger btn-circle btn-xs" title="Delete">
-                            <i class="fa fa-times"></i>
-                        </a>
+
+                        <form action="{{ route('contacts.destroy', $contact->id) }}" method="post" style="display: inline-block">
+                            @method('DELETE')
+                            @csrf
+                            <button type="submit" class="btn btn-outline-danger btn-circle btn-xs" title="Delete" onclick="return confirm('Are you sure?')">
+                                <i class="fa fa-times"></i>
+                            </button>
+                        </form>
                     </div>
                 </td>
             </tr>

@@ -20,6 +20,12 @@ class ContactsController extends Controller
      */
     private $limit = 5;
 
+    private $upload_dir = '/public/uploads/';
+
+    public function __construct()
+    {
+        $this->upload_dir = base_path() . $this->upload_dir;
+    }
 
     public function index(Request $request)
     {
@@ -70,17 +76,28 @@ class ContactsController extends Controller
     }
 
 
-    public function update(ContactRequest $request, Contact $contact)
+    public function update(ContactRequest $request, $id)
     {
+        $contact = Contact::find($id);
+        $oldPhoto = $contact->photo;
+
         $data = $this->uploadProfileImage($request);
         $contact->update($data);
-        return redirect('/contacts')->with('success', 'Your contact has been updated.');
+
+        if ($oldPhoto !== $contact->photo){
+            $this->removePhoto($oldPhoto);
+        }
+
+        return redirect('contacts')->with('success', 'Your contact has been updated.');
     }
 
 
     public function destroy($id)
     {
-        //
+        $contact = Contact::find($id);
+        $this->removePhoto($contact->photo);
+        $contact->delete($contact);
+        return redirect('contacts')->with('success', 'Your contact has been deleted.');
     }
 
     public function uploadProfileImage(ContactRequest $request)
@@ -95,6 +112,16 @@ class ContactsController extends Controller
             $data['photo'] = $fileName;
         }
         return $data;
+    }
+
+    public function removePhoto($photo)
+    {
+        if (!empty($photo)){
+            $file_path =  $this->upload_dir . $photo;
+            if (file_exists($file_path)){
+                unlink($file_path);
+            }
+        }
     }
 
 }
