@@ -25,14 +25,23 @@ class ContactsController extends Controller
         $this->upload_dir = base_path() . $this->upload_dir;
     }
 
-    public function index(Request $request)
+    public function autocomplete(Request $request)
     {
-//        if ($group_id = ($request->get('group_id'))){
-//            $contacts = Contact::where('group_id', $group_id)->orderby('id', 'desc')->paginate($this->limit);
-//        }else{
-//            $contacts = Contact::orderby('id', 'desc')->paginate($this->limit);
+//        if ($request->ajax()){
+            return Contact::select(['id', 'name'])->where(function ($query) use ($request) {
+                if ($term = $request->get('term')){
+                    $keywords = '%'. $term .'%';
+                    $query->orWhere('name', 'LIKE', $keywords);
+                    $query->orWhere('company', 'LIKE', $keywords);
+                    $query->orWhere('email', 'LIKE', $keywords);
+                }
+            })->orderby('name', 'asc')->take(5)->get();
+
 //        }
 
+    }
+    public function index(Request $request)
+    {
         $contacts = Contact::where(function ($query) use ($request) {
             if ($group_id = $request->get('group_id')) {
                 $query->where('group_id', $group_id);

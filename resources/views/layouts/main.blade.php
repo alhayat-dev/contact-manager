@@ -13,12 +13,22 @@
     <link href="{{ asset('assets/css/jasny-bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/css/custom.css') }}" rel="stylesheet">
 
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <link rel="stylesheet" href="{{ asset('assets/jquery-ui/jquery-ui.css') }}">
+
+
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
     <script src="{{ url('https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js') }}"></script>
     <script src="{{ url('https://oss.maxcdn.com/respond/1.4.2/respond.min.js') }}"></script>
     <![endif]-->
+
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
 </head>
 
 <body>
@@ -39,7 +49,7 @@
 
                     <form action="{{ route('contacts.index') }}" class="navbar-left mr-2">
                         <div class="input-group">
-                            <input type="text" class="form-control" name="term" placeholder="Search term..." value="{{ Request::get('term') }}">
+                            <input type="text" class="form-control term" name="term" id="term" placeholder="Search term..." value="{{ Request::get('term') }}">
                             <span class="input-group-btn">
                                 <button class="btn btn-outline-secondary" type="submit">
                                     <span><i class="fa fa-search" aria-hidden="true"></i></span>
@@ -82,6 +92,42 @@
 <script src="{{ asset('assets/js/popper.min.js') }}"></script>
 <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
 <script src="{{ asset('assets/js/jasny-bootstrap.min.js') }}"></script>
+<script src="{{ asset('assets/jquery-ui/jquery-ui.js') }}"></script>
+
+
+
+
+<script>
+    $(document).ready(function() {
+        $( "#term" ).autocomplete({
+
+            source: function(request, response) {
+                $.ajax({
+                    url: "{{url('contacts.autocomplete')}}",
+                    data: {
+                        term : request.term
+                    },
+                    dataType: "json",
+                    success: function(data){
+                        var resp = $.map(data,function(obj){
+                            console.log(obj.city_name);
+                            // return obj.name;
+                        });
+
+                        response(resp);
+                    }
+                });
+            },
+            minLength: 3
+        });
+    });
+
+</script>
+
+
+
+
+
 <script>
     $("#add-new-group").hide();
     $('#add-group-btn').click(function () {
@@ -91,5 +137,6 @@
         return false;
     });
 </script>
+
 </body>
 </html>
