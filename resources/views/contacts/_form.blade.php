@@ -64,9 +64,14 @@
             <div class="form-group row" id="add-new-group">
                 <div class="offset-md-3 col-md-8">
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" name="group" placeholder="Enter group name" aria-label="Enter group name" aria-describedby="button-addon2">
+                        <input type="text"
+                               id="new_group"
+                               class="form-control"
+                               name="group" placeholder="Enter group name"
+                               aria-label="Enter group name"
+                               aria-describedby="button-addon2">
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" id="button-addon2">
+                            <button class="btn btn-outline-secondary" type="button" id="add-new-btn">
                                 <i class="fa fa-check"></i>
                             </button>
                         </div>
@@ -105,3 +110,54 @@
         </div>
     </div>
 </div>
+
+@section('form-script')
+    <script>
+        $("#add-new-group").hide();
+        $('#add-group-btn').click(function () {
+            $("#add-new-group").slideToggle(function() {
+                $('#new_group').focus();
+            });
+            return false;
+        });
+
+        $("#add-new-btn").click(function (e) {
+            var newGroup = $("#new_group");
+            var inputGroup =  newGroup.closest('.input-group');
+
+            $.ajax({
+                url: "{{ route('groups.store') }}",
+                type: 'post',
+                data: {
+                    name: $("#new_group").val(),
+                    _token: $("input[name=_token]").val()
+                },
+                success: function (group) {
+                    if(group.id != null){
+                        inputGroup.removeClass('.has-error');
+                        inputGroup.next('.text-danger');
+
+                        var newOption = $('<option></option>')
+                            .attr('value', group.id)
+                            .attr('selected', true)
+                            .text(group.name);
+                        
+                        $("select[name=group_id]")
+                            .append( newOption);
+
+                        newGroup.val("");
+
+                    }
+                },
+                error: function(xhr, status, error) {
+                    var errors = eval("(" + xhr.responseText + ")");
+                    var error = errors.errors.name
+                    if(error){
+                            inputGroup.next('.text-danger').remove();
+                            inputGroup.addClass('.has-error').after("<p class='text-danger'>" + error + "</p>");
+                    }
+                }
+            });
+        });
+    </script>
+@endsection
