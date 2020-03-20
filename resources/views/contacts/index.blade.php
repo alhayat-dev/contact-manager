@@ -2,6 +2,17 @@
 @section('content')
     <div class="card">
         <div class="card-header"><strong>All Contacts</strong></div>
+        <div class="card-body">
+            <div class="float-left">
+                <h4>All Contacts</h4>
+            </div>
+            <div class="float-right">
+                <a href="{{ route('contacts.create') }}" class="btn btn-outline-primary">
+                    <span><i class="fa fa-plus" aria-hidden="true"></i></span>
+                    Add Contact
+                </a>
+            </div>
+        </div>
         <table class="table">
             @foreach($contacts as $contact)
                 <tr>

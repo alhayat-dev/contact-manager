@@ -17,6 +17,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/', "HomeController@index");
+
 Route::post("groups/store", "GroupsController@store")->name('groups.store');
 Route::resource('contacts', 'ContactsController');
 //Route::resource('groups', 'GroupsController');

@@ -141,7 +141,7 @@
                             .attr('value', group.id)
                             .attr('selected', true)
                             .text(group.name);
-                        
+
                         $("select[name=group_id]")
                             .append( newOption);
 
