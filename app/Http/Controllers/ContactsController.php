@@ -8,6 +8,7 @@ use App\Http\Requests\ContactRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Redirector;
+use Illuminate\Support\Facades\DB;
 
 
 class ContactsController extends Controller
@@ -43,7 +44,10 @@ class ContactsController extends Controller
     }
     public function index(Request $request)
     {
+
         $contacts = Contact::where(function ($query) use ($request) {
+            // filter by current user
+            $query->where('user_id', $request->user()->id);
             if ($group_id = $request->get('group_id')) {
                 $query->where('group_id', $group_id);
             }
@@ -56,8 +60,8 @@ class ContactsController extends Controller
         })->orderby('id', 'desc')
         ->paginate($this->limit);
 
-        $groups = Group::all();
-        return view('contacts.index', compact('contacts','groups'));
+//        $groups = Group::all();
+        return view('contacts.index', compact('contacts'));
     }
 
 
@@ -77,7 +81,7 @@ class ContactsController extends Controller
     public function store(ContactRequest $request)
     {
         $data = $this->uploadProfileImage($request);
-        Contact::create($data);
+        $request->user()->contacts()->create($data);
         return redirect('contacts')->with('success', 'Contact Save');
     }
 
@@ -90,6 +94,7 @@ class ContactsController extends Controller
 
     public function edit(Contact $contact)
     {
+        $this->authorize('modify', $contact);
         $groups = Group::all()->map(function ($item){
             return collect($item)->only(['id', 'name']);
         });
@@ -99,6 +104,8 @@ class ContactsController extends Controller
 
     public function update(ContactRequest $request, $id)
     {
+        $contact = Contact::findOrFail($id);
+        $this->authorize('modify', $contact);
         $contact = Contact::find($id);
         $oldPhoto = $contact->photo;
 
